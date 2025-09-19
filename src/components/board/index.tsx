@@ -26,11 +26,17 @@ const Board = (): JSX.Element => {
         dispatch(fetchCards());
         console.log('delete-card');
       });
+
+      socket.on('update-card', () => {
+        dispatch(fetchCards());
+        console.log('update-card');
+      });
     }
     return () => {
       if (socket && board._id) {
         socket.off('create-card');
         socket.off('delete-card');
+        socket.off('update-card');
       }
     };
   }, [socket, board, dispatch]);

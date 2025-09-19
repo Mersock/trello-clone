@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await db
           .collection('cards')
           .updateOne({ _id: cardId, boardId: slug }, { $set: { ...req.body } });
-
+        io.to(slug).emit('update-card');
         res.send({ message: 'Card updated' });
         return;
       }
