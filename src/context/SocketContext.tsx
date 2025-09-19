@@ -8,24 +8,30 @@ interface ISocketContext {
 
 let socket: Socket;
 
-export const useSocket = (): ISocketContext => {
+export const useSocket = (boardId: string): ISocketContext => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     socket = io();
+    const initSocket = async () => {
+      await fetch('/api/socket');
 
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
+      socket.on('connect', () => {
+        setIsConnected(true);
+        socket.emit('join-board', boardId);
+      });
 
-    socket.on('disconnect', () => {
-      setIsConnected(false);
-    });
+      socket.on('disconnect', () => {
+        setIsConnected(false);
+      });
+    };
+    initSocket();
 
     return () => {
+      socket.emit('leave-board', boardId);
       socket.disconnect();
     };
-  }, []);
+  }, [boardId]);
 
   return { isConnected, socket };
 };
