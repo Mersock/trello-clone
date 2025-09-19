@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '@/util/mongodb';
+import { Server as SocketIOServer } from 'socket.io';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const { slug } = req.query;
 
   const { db, client } = await connectToDatabase();
+  const io: SocketIOServer = (res as any).socket.server.io;
 
   if (client.isConnected()) {
     const requestType = req.method;
@@ -42,6 +44,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const board = await db.collection('columns').insertOne(data);
         res.send(board);
 
+        return;
+      }
+      case 'PATCH': {
+        io.to(slug).emit('update-sequence-column');
+        res.send({ message: 'Update to Socket new sequence column' });
         return;
       }
 

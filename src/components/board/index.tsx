@@ -9,6 +9,7 @@ import PropType from 'prop-types';
 import { useSocket } from '@/src/context/SocketContext';
 import { useDispatch } from 'react-redux';
 import { fetchCards } from '@/src/slices/cards';
+import { fetchColumns } from '@/src/slices/columns';
 
 const Board = (): JSX.Element => {
   const board = useAppSelector((state) => state.board.board);
@@ -31,12 +32,18 @@ const Board = (): JSX.Element => {
         dispatch(fetchCards());
         console.log('update-card');
       });
+
+      socket.on('update-sequence-column', () => {
+        dispatch(fetchColumns());
+        console.log('update-sequence-column');
+      });
     }
     return () => {
       if (socket && board._id) {
         socket.off('create-card');
         socket.off('delete-card');
         socket.off('update-card');
+        socket.off('update-sequence-column');
       }
     };
   }, [socket, board, dispatch]);
