@@ -6,25 +6,34 @@ import { useAppSelector } from '@/src/hooks';
 
 import BoardColumns from '@/src/components/board/columns';
 import PropType from 'prop-types';
-
 import { useSocket } from '@/src/context/SocketContext';
+import { useDispatch } from 'react-redux';
+import { fetchCards } from '@/src/slices/cards';
 
 const Board = (): JSX.Element => {
   const board = useAppSelector((state) => state.board.board);
-  const { socket } = useSocket();
+  const { socket } = useSocket(board._id);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const slug = board._id;
-    if (socket && slug) {
-      socket.emit('join-board', slug);
-    }
+    if (socket && board._id) {
+      socket.on('create-card', () => {
+        dispatch(fetchCards());
+        console.log('care-card');
+      });
 
+      socket.on('delete-card', () => {
+        dispatch(fetchCards());
+        console.log('delete-card');
+      });
+    }
     return () => {
-      if (socket && slug) {
-        socket.emit('leave-board', slug);
+      if (socket && board._id) {
+        socket.off('create-card');
+        socket.off('delete-card');
       }
     };
-  }, [socket, board]);
+  }, [socket, board, dispatch]);
 
   return (
     <Box

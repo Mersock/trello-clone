@@ -68,7 +68,7 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
   const handleCardAdd = async () => {
     await dispatch(addCard(column._id));
-    await dispatch(fetchCards());
+    // await dispatch(fetchCards());
   };
 
   const handleChange = (e) => {

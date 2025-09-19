@@ -43,7 +43,7 @@ const CardDetailsModal: FC<Props> = ({ onClose, isOpen, card }) => {
 
   const handleCardDelete = async () => {
     await dispatch(deleteCard(card._id));
-    await dispatch(fetchCards());
+    // await dispatch(fetchCards());
 
     onClose();
   };
