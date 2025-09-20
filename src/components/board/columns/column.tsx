@@ -78,7 +78,7 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
   const handleColumnDelete = async () => {
     await dispatch(deleteColumn(id));
-    await dispatch(fetchColumns());
+    // await dispatch(fetchColumns());
   };
 
   const handleColumnNameChange = useCallback(

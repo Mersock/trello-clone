@@ -19,7 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'DELETE': {
         await db.collection('cards').deleteOne({ _id: cardId });
+
         io.to(slug).emit('delete-card');
+
         res.send({ message: 'A card has been deleted' });
 
         return;
@@ -29,7 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await db
           .collection('cards')
           .updateOne({ _id: cardId, boardId: slug }, { $set: { ...req.body } });
+
         io.to(slug).emit('update-card');
+
         res.send({ message: 'Card updated' });
         return;
       }

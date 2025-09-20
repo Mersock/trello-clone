@@ -42,13 +42,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         const board = await db.collection('columns').insertOne(data);
+
+        io.to(slug).emit('add-column');
+
         res.send(board);
 
         return;
       }
       case 'PATCH': {
         io.to(slug).emit('update-sequence-column');
+
         res.send({ message: 'Update to Socket new sequence column' });
+
         return;
       }
 

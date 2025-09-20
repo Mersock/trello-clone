@@ -37,6 +37,21 @@ const Board = (): JSX.Element => {
         dispatch(fetchColumns());
         console.log('update-sequence-column');
       });
+
+      socket.on('add-column', () => {
+        dispatch(fetchColumns());
+        console.log('add-column');
+      });
+
+      socket.on('update-column', () => {
+        dispatch(fetchColumns());
+        console.log('update-column');
+      });
+
+      socket.on('delete-column', () => {
+        dispatch(fetchColumns());
+        console.log('delete-column');
+      });
     }
     return () => {
       if (socket && board._id) {
@@ -44,6 +59,9 @@ const Board = (): JSX.Element => {
         socket.off('delete-card');
         socket.off('update-card');
         socket.off('update-sequence-column');
+        socket.off('update-column');
+        socket.off('add-column');
+        socket.off('delete-column');
       }
     };
   }, [socket, board, dispatch]);

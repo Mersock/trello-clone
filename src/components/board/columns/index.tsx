@@ -40,7 +40,7 @@ const BoardColumns: FC = (): JSX.Element => {
     const columnId = shortId.generate();
 
     await dispatch(addColumnToBoard(columnId));
-    await dispatch(fetchColumns());
+    // await dispatch(fetchColumns());
   };
 
   const filterCards = (columnId: string) => {
