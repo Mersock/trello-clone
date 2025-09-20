@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -94,6 +94,10 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
     await dispatch(updateColumn(data));
   };
+
+  useEffect(() => {
+    setColumnName(column.columnName);
+  }, [column]);
 
   return (
     <Draggable draggableId={column._id} index={index} key={column._id}>
