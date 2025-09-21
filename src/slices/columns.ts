@@ -159,6 +159,31 @@ export const updateColumnSequence = createAsyncThunk(
   }
 );
 
+export const updateColumnSocket = createAsyncThunk(
+  'column/updateColumnSocket',
+  async (obj, { getState }) => {
+    const { board } = getState() as { board: BoardSlice };
+
+    const url = `${host}/api/boards/${board.board._id}/columns`;
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer'
+    });
+
+    const inJSON = await response.json();
+
+    return inJSON;
+  }
+);
+
 export const columnsSlice = createSlice({
   name: 'columns',
   initialState: initialState,

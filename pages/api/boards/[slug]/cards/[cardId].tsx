@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '@/util/mongodb';
+import { Server as SocketIOServer } from 'socket.io';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const { cardId, slug } = req.query;
 
   const { db, client } = await connectToDatabase();
+  const io: SocketIOServer = (res as any).socket.server.io;
 
   if (client.isConnected()) {
     const requestType = req.method;
@@ -18,6 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'DELETE': {
         await db.collection('cards').deleteOne({ _id: cardId });
 
+        io.to(slug).emit('delete-card');
+
         res.send({ message: 'A card has been deleted' });
 
         return;
@@ -27,6 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await db
           .collection('cards')
           .updateOne({ _id: cardId, boardId: slug }, { $set: { ...req.body } });
+
+        io.to(slug).emit('update-card');
 
         res.send({ message: 'Card updated' });
         return;

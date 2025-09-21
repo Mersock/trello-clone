@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -68,7 +68,7 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
   const handleCardAdd = async () => {
     await dispatch(addCard(column._id));
-    await dispatch(fetchCards());
+    // await dispatch(fetchCards());
   };
 
   const handleChange = (e) => {
@@ -78,7 +78,7 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
   const handleColumnDelete = async () => {
     await dispatch(deleteColumn(id));
-    await dispatch(fetchColumns());
+    // await dispatch(fetchColumns());
   };
 
   const handleColumnNameChange = useCallback(
@@ -94,6 +94,10 @@ const Column = ({ showCardDetail, column, index, id, cards }): JSX.Element => {
 
     await dispatch(updateColumn(data));
   };
+
+  useEffect(() => {
+    setColumnName(column.columnName);
+  }, [column]);
 
   return (
     <Draggable draggableId={column._id} index={index} key={column._id}>

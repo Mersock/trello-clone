@@ -10,7 +10,8 @@ import {
   addColumnToBoard,
   fetchColumns,
   updateColumnSequenceToLocalState,
-  updateColumnSequence
+  updateColumnSequence,
+  updateColumnSocket
 } from '@/src/slices/columns';
 import { updateCardSequence, updateCardSequenceToLocalState } from '@/src/slices/cards';
 
@@ -26,6 +27,8 @@ const BoardColumns: FC = (): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [cardDetail, setCardDetail] = useState<CardDetail>({ _id: '', title: '', description: '' });
 
+  const [isLoading, setIsloading] = useState(false);
+
   const showCardDetail = (cardId: string) => {
     const card = cards.filter((card) => card._id === cardId);
 
@@ -37,7 +40,7 @@ const BoardColumns: FC = (): JSX.Element => {
     const columnId = shortId.generate();
 
     await dispatch(addColumnToBoard(columnId));
-    await dispatch(fetchColumns());
+    // await dispatch(fetchColumns());
   };
 
   const filterCards = (columnId: string) => {
@@ -109,13 +112,11 @@ const BoardColumns: FC = (): JSX.Element => {
   };
 
   const saveColumnSequence = async (destinationIndex: number, columnId: string) => {
+    setIsloading(true);
     // Remove the column which is dragged from the list
     const filteredColumns = columns.filter((column) => column._id !== columnId);
-
     const sortedColumns = filteredColumns.sort((a, b) => a.sequence - b.sequence);
-
     let sequence = destinationIndex === 0 ? 1 : sortedColumns[destinationIndex - 1].sequence + 1;
-
     const patchColumn = {
       _id: columnId,
       sequence
@@ -141,7 +142,10 @@ const BoardColumns: FC = (): JSX.Element => {
 
     // Added temporarily to refresh the page on column, otherwise it will not reflect the changes
     // Will be fixed later
-    window.location.reload();
+    // window.location.reload();
+    // await dispatch(fetchColumns());
+    await dispatch(updateColumnSocket());
+    setIsloading(false);
   };
 
   return (
@@ -155,16 +159,18 @@ const BoardColumns: FC = (): JSX.Element => {
               display="flex"
               position="absolute"
               overflowY="auto">
-              {columns.map((column, index) => (
-                <Column
-                  key={column._id}
-                  column={column}
-                  id={column._id}
-                  index={index}
-                  cards={filterCards(column._id)}
-                  showCardDetail={showCardDetail}
-                />
-              ))}
+              {columns.map((column, index) =>
+                !isLoading ? (
+                  <Column
+                    key={column._id}
+                    column={column}
+                    id={column._id}
+                    index={index}
+                    cards={filterCards(column._id)}
+                    showCardDetail={showCardDetail}
+                  />
+                ) : null
+              )}
               {provided.placeholder}
               <AddColumnButton addColumn={addColumn} />
             </Box>
