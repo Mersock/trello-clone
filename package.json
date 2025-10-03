@@ -28,6 +28,7 @@
     "@reduxjs/toolkit": "^1.5.1",
     "@sendgrid/mail": "^7.4.4",
     "bcrypt": "^5.0.1",
+    "chakra-ui-simple-autocomplete": "^2.3.0",
     "cookie": "^0.4.1",
     "framer-motion": "^4",
     "js-cookie": "^2.2.1",
